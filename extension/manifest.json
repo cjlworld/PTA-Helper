@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Problem Solver",
+  "version": "1.0",
+  "description": "Adds a 'Show Solution' button to specific problem blocks.",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

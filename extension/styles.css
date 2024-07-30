@@ -1,0 +1,13 @@
+.solution-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #0073e6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.solution-button:hover {
+  background-color: #005bb5;
+}
