@@ -1,8 +1,27 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
 
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "https://pintia.cn"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 API_KEY = "sk-d450ac646a11497398b5044fbf9377f8"
 
@@ -10,19 +29,23 @@ API_KEY = "sk-d450ac646a11497398b5044fbf9377f8"
 async def index():
     return "Hello, FastAPI!"
 
-@app.get("/submit")
-async def submit(request: Request):
+class ProblemDescription(BaseModel):
+    description: str
+
+@app.post("/submit")
+async def submit(problem_description: ProblemDescription) -> StreamingResponse:
+    description = problem_description.description
     client = OpenAI(api_key=API_KEY, base_url="https://api.deepseek.com")
     response = client.chat.completions.create(
         model="deepseek-chat",
         messages=[
             {"role": "system", "content": "You are a helpful assistant"},
-            {"role": "user", "content": "Hello"},
+            {"role": "user", "content": f"请你根据以下题目生成解析 \n {description}"},
         ],
         stream=True,
     )
 
-    async def stream_response():
+    def stream_response():
         for chunk in response:
             yield chunk.choices[0].delta.content or ""
 
