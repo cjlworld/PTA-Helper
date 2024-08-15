@@ -3,6 +3,7 @@ from fastapi.responses import StreamingResponse
 from openai import OpenAI
 import dashscope
 from http import HTTPStatus
+import yaml
 
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -25,14 +26,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DEEPSEEK_API_KEY = "sk-d450ac646a11497398b5044fbf9377f8"
-QWEN_API_KEY = "sk-609f4051ace14214ad7101fc0face7d1"
-USE_MODEL = "QWEN"
 
+# 读取 config.yaml 文件
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
+# 从配置中获取变量
+DEEPSEEK_API_KEY = config.get('DEEPSEEK_API_KEY')
+QWEN_API_KEY = config.get('QWEN_API_KEY')
+USE_MODEL = config.get('USE_MODEL')
 
 class ProblemDescription(BaseModel):
     description: str
-
 
 @app.post("/submit")
 async def submit(problem_description: ProblemDescription) -> StreamingResponse:
