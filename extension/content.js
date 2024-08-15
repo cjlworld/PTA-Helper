@@ -87,7 +87,7 @@ function addButton() {
       return;
     }
     const button = document.createElement("button");
-    button.textContent = "Show Solution";
+    button.textContent = "题目解析";
     button.classList.add("solution-button");
     // 贴在 block 倒二个位置
     block.insertBefore(button, block.lastElementChild);
