@@ -2,7 +2,8 @@ console.log("Content script loaded");
 
 // 引入 marked 库
 const script = document.createElement('script');
-script.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
+// script.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
+script.src = "./marked.min.js"
 script.onload = () => {
   console.log("marked library loaded");
   init();
@@ -34,7 +35,7 @@ async function handleStreamResponse(blockHtml, outputElement) {
 
   // 创建一个用于显示所有数据的 <div> 元素
   const divElement = document.createElement('div');
-  outputElement.appendChild(divElement);
+  outputElement.insertBefore(divElement, outputElement.lastElementChild);
 
   // 定义一个变量来存储累积的文本
   let accumulatedText = '';
@@ -56,9 +57,6 @@ async function handleStreamResponse(blockHtml, outputElement) {
       // 将数据块追加到 accumulatedText
       accumulatedText += chunk;
       
-      // // 将数据块追加到 <p> 元素中
-      // pElement.textContent += chunk;
-
       // 将 accumulatedText 作为 Markdown 转换为 HTML
       const htmlContent = marked.parse(accumulatedText);
 
@@ -91,7 +89,8 @@ function addButton() {
     const button = document.createElement("button");
     button.textContent = "Show Solution";
     button.classList.add("solution-button");
-    block.appendChild(button);
+    // 贴在 block 倒二个位置
+    block.insertBefore(button, block.lastElementChild);
   
     button.addEventListener("click", async function() {
       // alert("Solution button clicked!");
