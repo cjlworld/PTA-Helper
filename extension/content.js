@@ -1,5 +1,14 @@
 console.log("Content script loaded");
 
+// 引入 marked 库
+const script = document.createElement('script');
+script.src = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
+script.onload = () => {
+  console.log("marked library loaded");
+  init();
+};
+document.head.appendChild(script);
+
 // sleep
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -32,9 +41,12 @@ async function handleStreamResponse(blockHtml, outputElement) {
   // 获取 ReadableStream
   const reader = response.body.getReader();
 
-  // 创建一个用于显示所有数据的 <p> 元素
-  const pElement = document.createElement('p');
-  outputElement.appendChild(pElement);
+  // 创建一个用于显示所有数据的 <div> 元素
+  const divElement = document.createElement('div');
+  outputElement.appendChild(divElement);
+
+  // 定义一个变量来存储累积的文本
+  let accumulatedText = '';
 
   // 定义一个异步函数来读取流数据
   async function readStream() {
@@ -50,8 +62,17 @@ async function handleStreamResponse(blockHtml, outputElement) {
       // 处理数据块（例如，将 Uint8Array 转换为字符串）
       const chunk = new TextDecoder("utf-8").decode(value);
 
-      // 将数据块追加到 <p> 元素中
-      pElement.textContent += chunk;
+      // 将数据块追加到 accumulatedText
+      accumulatedText += chunk;
+      
+      // // 将数据块追加到 <p> 元素中
+      // pElement.textContent += chunk;
+
+      // 将 accumulatedText 作为 Markdown 转换为 HTML
+      const htmlContent = marked.parse(accumulatedText);
+
+      // 用转换后的 HTML 替换 divElement 的内容
+      divElement.innerHTML = htmlContent;
 
       // 确保页面滚动到最新数据的位置
       outputElement.scrollTop = outputElement.scrollHeight;
@@ -85,4 +106,5 @@ waitForPageLoad().then(() => {
     });
   });  
 })
+
 
