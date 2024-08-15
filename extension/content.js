@@ -9,18 +9,9 @@ script.onload = () => {
 };
 document.head.appendChild(script);
 
-// sleep
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// 等待页面加载完成
-async function waitForPageLoad() {
-  return sleep(10000);
-}
-
 const BASE_URL = "http://localhost:8080";
 
+// 请求后端，并渲染流式响应到 outputElement
 // 定义一个函数来处理流响应
 async function handleStreamResponse(blockHtml, outputElement) {
   console.log("blockHtml:", blockHtml);
@@ -83,13 +74,20 @@ async function handleStreamResponse(blockHtml, outputElement) {
   await readStream();
 }
 
-// 执行脚本
-waitForPageLoad().then(() => {
+// 给页面对应位置添加按钮，并添加点击事件
+function addButton() {
+  console.log("addButton");
   const problemBlocks = document.querySelectorAll("div.pc-x.pt-2.pl-4");
 
   console.log('Problem blocks:', problemBlocks);
   
   problemBlocks.forEach((block) => {
+    // 先找一下 button 是否存在
+    const existingButton = block.querySelector(".solution-button");
+    if (existingButton) {
+      // 如果存在，则跳过
+      return;
+    }
     const button = document.createElement("button");
     button.textContent = "Show Solution";
     button.classList.add("solution-button");
@@ -105,6 +103,9 @@ waitForPageLoad().then(() => {
       await handleStreamResponse(blockHtml, block);
     });
   });  
-})
+}
+
+// 每 1 秒执行一次 addButton 函数
+setInterval(addButton, 1000);
 
 
