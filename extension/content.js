@@ -10,7 +10,7 @@ script.onload = () => {
 };
 document.head.appendChild(script);
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://xlab.zju.edu.cn/test/pta-helper";
 
 // 请求后端，并渲染流式响应到 outputElement
 // 定义一个函数来处理流响应
